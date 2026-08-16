@@ -70,9 +70,10 @@ void P10Display::begin(P10Pins pins) {
     }
     digitalWrite(_pins.pin_oe, HIGH); // Blanking awal
 
-    // Jalankan FreeRTOS Scanning Task khusus pada Core 0 dengan Prioritas 3
-    // sehingga scanning display tidak pernah terganggu oleh loop() / Serial / RS232 di Core 1
-    xTaskCreatePinnedToCore(scanTask, "P10ScanTask", 4096, this, 3, NULL, 0);
+    // Jalankan FreeRTOS Scanning Task pada Core 1 dengan Prioritas 15
+    // Hal ini agar proses scan display tidak bersaing dengan Wi-Fi / TCP stack yang berjalan di Core 0,
+    // serta memiliki prioritas tinggi di Core 1 untuk mencegah preempting dari loop()
+    xTaskCreatePinnedToCore(scanTask, "P10ScanTask", 4096, this, 15, NULL, 1);
 }
 
 void P10Display::clear() {
