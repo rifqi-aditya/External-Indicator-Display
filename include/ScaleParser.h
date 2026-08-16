@@ -18,9 +18,7 @@ public:
 
     void begin(uint32_t baudRate);
     void update();
-    void feedChar(char c);
     void setBaudRate(uint32_t baudRate);
-    void setProtocolParser(IProtocolParser* parser);
 
     String getWeightString() const { return _weightStr; }
     String getLastRawData() const { return _lastRawData; }
@@ -29,6 +27,7 @@ public:
     bool isConnected() const;
 
 private:
+    void feedChar(char c);
     int _rxPin;
     int _txPin;
     uint32_t _baudRate;

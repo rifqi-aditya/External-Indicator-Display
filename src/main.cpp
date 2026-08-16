@@ -44,8 +44,6 @@ void setup() {
     // 1. Load NVS Preferences
     configMgr.begin();
     configMgr.loadConfig(config);
-    config.displayMode = MODE_LIVE_SCALE; // Force default Mode 0: Live Weight Timbangan
-    config.baudRate = 9600; // Force 9600 Baud
 
     Serial.printf("[BOOT] Config: Mode=%d, Baud=%lu, Text='%s'\n", 
                   config.displayMode, config.baudRate, config.staticText.c_str());
@@ -79,12 +77,7 @@ void loop() {
     scaleParser.update();
     webPortal.update();
 
-    // 2. Realtime Stream Log ke Serial Monitor (Dinonaktifkan untuk Mode Produksi agar tidak ada overhead UART)
-    if (scaleParser.hasNewFrame()) {
-        // Serial.printf("[RS232 REALTIME] RAW: \"%s\"  =>  PARSED: %s\n", 
-        //               scaleParser.getLastRawData().c_str(), 
-        //               scaleParser.getWeightString().c_str());
-    }
+
 
     // 3. Update Konfigurasi jika diubah via Web UI
     if (webPortal.isConfigUpdated()) {

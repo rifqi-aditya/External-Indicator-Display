@@ -25,13 +25,6 @@ ScaleParser::~ScaleParser() {
     }
 }
 
-void ScaleParser::setProtocolParser(IProtocolParser* parser) {
-    if (_ownsParser && _protocolParser) {
-        delete _protocolParser;
-    }
-    _protocolParser = parser;
-    _ownsParser = false;
-}
 
 void ScaleParser::begin(uint32_t baudRate) {
     _baudRate = baudRate;

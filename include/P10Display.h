@@ -20,12 +20,10 @@ public:
     void begin(P10Pins pins);
     void clear();
     void setPixel(int x, int y, bool on);
-    void drawRect(int x, int y, int w, int h);
     
     // Standard 5x7 Font
     void drawChar(int x, int y, char c);
     void drawStr(int x, int y, const char* s);
-    void drawStrCenter(int y, const char* s);
     int getStrWidth(const char* s);
 
     // ScaleFont16 (Proportional 14px Rounded BOLD Font for All Display Modes)

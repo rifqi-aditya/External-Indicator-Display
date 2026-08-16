@@ -101,17 +101,6 @@ void P10Display::setPixel(int x, int y, bool on) {
     }
 }
 
-void P10Display::drawRect(int x, int y, int w, int h) {
-    for (int i = x; i < x + w; i++) {
-        setPixel(i, y, true);
-        setPixel(i, y + h - 1, true);
-    }
-    for (int j = y; j < y + h; j++) {
-        setPixel(x, j, true);
-        setPixel(x + w - 1, j, true);
-    }
-}
-
 void P10Display::drawChar(int x, int y, char c) {
     int idx = getGlyphIndex(c);
     const uint8_t* glyph = Font5x7[idx];
@@ -144,13 +133,6 @@ void P10Display::drawStr(int x, int y, const char* s) {
         }
         s++;
     }
-}
-
-void P10Display::drawStrCenter(int y, const char* s) {
-    int w = getStrWidth(s);
-    int x = (_width - w) / 2;
-    if (x < 0) x = 0;
-    drawStr(x, y, s);
 }
 
 int P10Display::getScaleCharWidth(char c) {
