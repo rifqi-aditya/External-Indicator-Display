@@ -213,20 +213,36 @@ void P10Display::drawScaleWeightAlignedRight(const char* fullWeightStr) {
     String raw = String(fullWeightStr);
     raw.trim();
 
-    // Hilangkan suffix KG bila ada
+    String unit = "KG";
     if (raw.endsWith("KG") || raw.endsWith("kg")) {
+        unit = "KG";
+        raw = raw.substring(0, raw.length() - 2);
+        raw.trim();
+    } else if (raw.endsWith("LB") || raw.endsWith("lb")) {
+        unit = "LB";
         raw = raw.substring(0, raw.length() - 2);
         raw.trim();
     }
 
-    int weight = round(raw.toFloat());
-    String fullStr = String(weight) + " KG";
+    String numStr = raw;
+    if (numStr.length() == 0) {
+        numStr = "0";
+    }
 
-    int totalWidth = getScaleStrWidth(fullStr.c_str());
-    int xStart = _width - totalWidth;
+    int numWidth = getScaleStrWidth(numStr.c_str());
+    int unitWidth = getStrWidth(unit.c_str());
+    int gap = 2;        // Jarak spasi antar digit besar dan unit kecil
+    int marginRight = 1; // Jarak margin kanan layar
+
+    int totalWidth = numWidth + gap + unitWidth;
+    int xStart = _width - totalWidth - marginRight;
     if (xStart < 0) xStart = 0;
 
-    drawScaleStr(xStart, fullStr.c_str());
+    // 1. Gambar angka beban timbangan (Font 14-16px Bold) di y = 0
+    drawScaleStr(xStart, numStr.c_str());
+
+    // 2. Gambar satuan ("kg") menggunakan Font 5x7 di kanan bawah (y = 9)
+    drawStr(xStart + numWidth + gap, 9, unit.c_str());
 }
 
 inline void P10Display::shiftByte(uint8_t val) {

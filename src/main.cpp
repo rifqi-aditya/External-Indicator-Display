@@ -13,8 +13,8 @@
 // ============================================================================
 
 #define PIN_OE   4  // P10 OE (Pin D4)
-#define PIN_A    19 // P10 A (Pin D19)
-#define PIN_B    21 // P10 B (Pin D21)
+#define PIN_A    21 // P10 A (Pin D21)
+#define PIN_B    19 // P10 B (Pin D19)
 #define PIN_CLK  18 // P10 CLK (Pin D18)
 #define PIN_LAT  5  // P10 LAT/STB (Pin D5)
 #define PIN_DATA 23 // P10 DATA/R1 (Pin D23)

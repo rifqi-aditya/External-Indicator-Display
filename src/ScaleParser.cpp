@@ -5,7 +5,7 @@ ScaleParser::ScaleParser(int rxPin, int txPin, IProtocolParser* parser)
       _txPin(txPin), 
       _baudRate(9600), 
       _lastRawData(""), 
-      _weightStr("0.0 KG"), 
+      _weightStr("0 KG"), 
       _numericWeight(0.0f),
       _newFrameFlag(false), 
       _ownsParser(false),

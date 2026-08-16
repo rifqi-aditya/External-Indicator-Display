@@ -37,12 +37,6 @@ bool YaohuaA12EParser::parse(const String& rawFrame, float& weight) {
 
 String YaohuaA12EParser::formatWeight(float weight) const {
     char formatted[16];
-    if (_lastDecimalPlaces == 0) {
-        snprintf(formatted, sizeof(formatted), "%.0f KG", weight);
-    } else if (_lastDecimalPlaces == 1) {
-        snprintf(formatted, sizeof(formatted), "%.1f KG", weight);
-    } else {
-        snprintf(formatted, sizeof(formatted), "%.2f KG", weight);
-    }
+    snprintf(formatted, sizeof(formatted), "%.0f KG", weight);
     return String(formatted);
 }
