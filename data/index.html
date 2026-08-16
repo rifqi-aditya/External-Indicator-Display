@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>External Scale Display Controller</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-glow"></div>
+    <div class="container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+                <div>
+                    <h1>Scale Display Pro</h1>
+                    <p class="subtitle">Yaohua A12E Controller & P10 HUB12</p>
+                </div>
+            </div>
+            <div class="status-badge" id="statusBadge">
+                <span class="pulse-dot"></span>
+                <span id="statusText">CONNECTING</span>
+            </div>
+        </header>
+
+        <!-- Live Weight Card -->
+        <section class="card weight-card">
+            <div class="card-header">
+                <span class="card-title">PEMBACAAN BEBAN REALTIME</span>
+                <span class="protocol-tag">RS232 @ 9600 BAUD</span>
+            </div>
+            <div class="weight-display">
+                <div class="weight-value" id="liveWeight">0.00</div>
+                <div class="weight-unit">KG</div>
+            </div>
+            <div class="raw-stream-box">
+                <span class="raw-label">RAW STREAM:</span>
+                <span class="raw-value" id="rawStream">Menunggu data...</span>
+            </div>
+        </section>
+
+        <!-- Configuration Card -->
+        <section class="card config-card">
+            <div class="card-header">
+                <span class="card-title">KONFIGURASI TAMPILAN P10</span>
+            </div>
+            <form id="configForm">
+                <div class="form-group">
+                    <label for="mode">Mode Display P10</label>
+                    <select id="mode" name="mode">
+                        <option value="0">⚖️ Live Weight (Timbangan)</option>
+                        <option value="1">📌 Teks Statis (Center)</option>
+                        <option value="2">📜 Running Text (Teks Berjalan)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="stext">Teks Statis (Center)</label>
+                    <input type="text" id="stext" name="stext" placeholder="Contoh: SYMETRA LAB" maxlength="32">
+                </div>
+
+                <div class="form-group">
+                    <label for="rtext">Running Text (Berjalan)</label>
+                    <input type="text" id="rtext" name="rtext" placeholder="Contoh: TIMBANGAN DIGITAL READY" maxlength="64">
+                </div>
+
+                <div class="form-group">
+                    <label for="baud">RS232 Baud Rate</label>
+                    <select id="baud" name="baud">
+                        <option value="1200">1200 Baud</option>
+                        <option value="2400">2400 Baud</option>
+                        <option value="4800">4800 Baud</option>
+                        <option value="9600">9600 Baud (Standard A12E)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btnSubmit">
+                    <span>Simpan Konfigurasi</span>
+                </button>
+            </form>
+        </section>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">Konfigurasi Berhasil Disimpan!</div>
+
+    <script src="/app.js"></script>
+</body>
+</html>
