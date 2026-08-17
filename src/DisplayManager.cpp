@@ -36,24 +36,45 @@ void DisplayManager::update(const AppConfig &config, const String &weightStr) {
             break;
         }
 
-        case MODE_STATIC_TEXT: {
-            if (_needsRedraw) {
-                _needsRedraw = false;
-                _display.clear();
-                _display.drawScaleStrCenter(config.staticText.c_str());
-                _display.commit();
+        case MODE_STATIC_TEXT: { // Mode 1: Smart Custom Text (Auto Statis / Running)
+            const char* txt = config.staticText.length() > 0 ? config.staticText.c_str() : config.runningText.c_str();
+            int strWidth = _display.getScaleStrWidth(txt);
+
+            if (strWidth <= _display.getWidth()) {
+                // Teks muat di layar -> Tampil Statis Ditengah
+                if (_needsRedraw) {
+                    _needsRedraw = false;
+                    _display.clear();
+                    _display.drawScaleStrCenter(txt);
+                    _display.commit();
+                }
+            } else {
+                // Teks melebihi lebar layar -> Otomatis Running Text (Berjalan)
+                if (now - _lastScrollTime > (config.scrollSpeed > 0 ? config.scrollSpeed : 40)) {
+                    _lastScrollTime = now;
+                    _display.clear();
+                    _display.drawScaleStr(_scrollPos, txt);
+                    _display.commit();
+                    _scrollPos--;
+                    if (_scrollPos < -strWidth) {
+                        _scrollPos = _display.getWidth();
+                    }
+                }
             }
             break;
         }
 
-        case MODE_RUNNING_TEXT: {
-            if (now - _lastScrollTime > config.scrollSpeed) {
+        case MODE_RUNNING_TEXT: { // Mode 2: Paksa Running Text (Berjalan)
+            const char* txt = config.runningText.length() > 0 ? config.runningText.c_str() : config.staticText.c_str();
+            int strWidth = _display.getScaleStrWidth(txt);
+
+            if (now - _lastScrollTime > (config.scrollSpeed > 0 ? config.scrollSpeed : 40)) {
                 _lastScrollTime = now;
                 _display.clear();
-                _display.drawScaleStr(_scrollPos, config.runningText.c_str());
+                _display.drawScaleStr(_scrollPos, txt);
                 _display.commit();
                 _scrollPos--;
-                if (_scrollPos < -_display.getScaleStrWidth(config.runningText.c_str())) {
+                if (_scrollPos < -strWidth) {
                     _scrollPos = _display.getWidth();
                 }
             }
@@ -61,3 +82,4 @@ void DisplayManager::update(const AppConfig &config, const String &weightStr) {
         }
     }
 }
+

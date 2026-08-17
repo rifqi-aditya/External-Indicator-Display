@@ -15,8 +15,8 @@ void WebPortal::begin(AppConfig &currentConfig) {
     }
 
     // 2. Inisialisasi Wi-Fi AP via WiFiAPManager
-    _wifiManager.begin("TIMBANGAN-P10-SETUP", "12345678");
-    Serial.printf("[WEB] Wi-Fi AP: TIMBANGAN-P10-SETUP (IP: %s)\n", _wifiManager.getIPAddress().c_str());
+    _wifiManager.begin("External Display", "12345678");
+    Serial.printf("[WEB] Wi-Fi AP: External Display (IP: %s)\n", _wifiManager.getIPAddress().c_str());
 
     // 3. Routing WebServer Endpoints
     _server.on("/", HTTP_GET, std::bind(&WebPortal::handleRoot, this));
@@ -51,6 +51,7 @@ void WebPortal::handleRoot() {
 
 bool WebPortal::handleFileRead(String path) {
     if (path.endsWith("/")) path += "index.html";
+    path.replace("%20", " ");
     
     String contentType = "text/plain";
     if (path.endsWith(".html")) contentType = "text/html";
@@ -58,8 +59,13 @@ bool WebPortal::handleFileRead(String path) {
     else if (path.endsWith(".js")) contentType = "application/javascript";
     else if (path.endsWith(".ico")) contentType = "image/x-icon";
     else if (path.endsWith(".svg")) contentType = "image/svg+xml";
+    else if (path.endsWith(".png")) contentType = "image/png";
+    else if (path.endsWith(".jpg") || path.endsWith(".jpeg")) contentType = "image/jpeg";
 
     if (_fsReady && LittleFS.exists(path)) {
+        if (!path.endsWith(".html")) {
+            _server.sendHeader("Cache-Control", "public, max-age=86400");
+        }
         File file = LittleFS.open(path, "r");
         _server.streamFile(file, contentType);
         file.close();
@@ -74,6 +80,7 @@ void WebPortal::handleSave() {
     }
     if (_server.hasArg("stext")) {
         _config.staticText = _server.arg("stext");
+        _config.runningText = _server.arg("stext");
     }
     if (_server.hasArg("rtext")) {
         _config.runningText = _server.arg("rtext");

@@ -3,93 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>External Scale Display Controller</title>
+    <title>Display Timbangan Eksternal</title>
     <link rel="stylesheet" href="/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="background-glow"></div>
     <div class="container">
-        <!-- Header -->
+        <!-- Header Aplikasi -->
         <header class="app-header">
             <div class="brand">
-                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                    <line x1="8" y1="21" x2="16" y2="21"></line>
-                    <line x1="12" y1="17" x2="12" y2="21"></line>
-                </svg>
+                <div class="brand-icon-wrapper">
+                    <img src="/DS%202x.png" alt="CV Duta Surya Logo" class="brand-logo" onerror="this.onerror=null; this.src='/logo.png';">
+                    <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                        <rect x="2" y="4" width="20" height="12" rx="2" ry="2"></rect>
+                        <line x1="6" y1="20" x2="18" y2="20"></line>
+                        <line x1="12" y1="16" x2="12" y2="20"></line>
+                    </svg>
+                </div>
                 <div>
-                    <h1>Scale Display Pro</h1>
-                    <p class="subtitle">Yaohua A12E Controller & P10 HUB12</p>
+                    <h1>Display Timbangan Eksternal</h1>
                 </div>
             </div>
             <div class="status-badge" id="statusBadge">
                 <span class="pulse-dot"></span>
-                <span id="statusText">CONNECTING</span>
+                <span id="statusText">MENGHUBUNGKAN</span>
             </div>
         </header>
 
-        <!-- Live Weight Card -->
-        <section class="card weight-card">
-            <div class="card-header">
-                <span class="card-title">PEMBACAAN BEBAN REALTIME</span>
-                <span class="protocol-tag">RS232 @ 9600 BAUD</span>
-            </div>
-            <div class="weight-display">
-                <div class="weight-value" id="liveWeight">0.00</div>
-                <div class="weight-unit">KG</div>
-            </div>
-            <div class="raw-stream-box">
-                <span class="raw-label">RAW STREAM:</span>
-                <span class="raw-value" id="rawStream">Menunggu data...</span>
+        <!-- Navigasi Tab (Minimalis & Responsif) -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="tab-live">
+                <span class="tab-icon">📊</span>
+                <span class="tab-label">Beranda</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-display">
+                <span class="tab-icon">🎨</span>
+                <span class="tab-label">Layar LED</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-config">
+                <span class="tab-icon">⚙️</span>
+                <span class="tab-label">Koneksi RS232</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-debug">
+                <span class="tab-icon">🔍</span>
+                <span class="tab-label">Diagnostik</span>
+            </button>
+        </nav>
+
+        <!-- TAB 1: BERANDA / LIVE WEIGHT -->
+        <section class="tab-content active" id="tab-live">
+            <div class="card weight-card">
+                <div class="card-header">
+                    <span class="card-title">PEMBACAAN BEBAN REALTIME</span>
+                    <span class="protocol-tag" id="activeBaudTag">RS232 @ 9600 BAUD</span>
+                </div>
+                <div class="weight-display">
+                    <div class="weight-value" id="liveWeight">0.00</div>
+                    <div class="weight-unit">KG</div>
+                </div>
+                <div class="quick-status-grid">
+                    <div class="status-item">
+                        <span class="status-item-label">Mode Layar Aktif</span>
+                        <span class="status-item-val" id="activeModeText">Live Weight</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-item-label">Status Sinyal</span>
+                        <span class="status-item-val green" id="activeSignalText">Normal</span>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Configuration Card -->
-        <section class="card config-card">
-            <div class="card-header">
-                <span class="card-title">KONFIGURASI TAMPILAN P10</span>
+        <!-- TAB 2: PENGATURAN LAYAR LED -->
+        <section class="tab-content" id="tab-display">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">KONFIGURASI TAMPILAN P10</span>
+                </div>
+                <form id="displayForm">
+                    <div class="form-group">
+                        <label for="mode">Mode Tampilan Layar</label>
+                        <select id="mode" name="mode">
+                            <option value="0">⚖️ Nilai Timbangan (Live Weight)</option>
+                            <option value="1">✨ Teks Custom (Otomatis Statis / Running)</option>
+                            <option value="2">📜 Paksa Running Text (Berjalan Continuous)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="groupCustomText">
+                        <div class="label-row">
+                            <label for="stext">Teks Custom Layar</label>
+                            <span class="char-count" id="charCount">0/32 Karakter</span>
+                        </div>
+                        <input type="text" id="stext" name="stext" placeholder="Contoh: TIMBANGAN READY" maxlength="64">
+                        
+                        <!-- Dynamic Smart Text Mode Badge -->
+                        <div class="smart-badge-container" id="smartBadgeContainer">
+                            <div class="smart-badge static" id="smartBadge">
+                                <span class="badge-icon" id="badgeIcon">📌</span>
+                                <span class="badge-text" id="badgeText">Teks Muat (Tampil Statis Ditengah)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Simpan Pengaturan Layar</button>
+                </form>
             </div>
-            <form id="configForm">
-                <div class="form-group">
-                    <label for="mode">Mode Display P10</label>
-                    <select id="mode" name="mode">
-                        <option value="0">⚖️ Live Weight (Timbangan)</option>
-                        <option value="1">📌 Teks Statis (Center)</option>
-                        <option value="2">📜 Running Text (Teks Berjalan)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="stext">Teks Statis (Center)</label>
-                    <input type="text" id="stext" name="stext" placeholder="Contoh: SYMETRA LAB" maxlength="32">
-                </div>
-
-                <div class="form-group">
-                    <label for="rtext">Running Text (Berjalan)</label>
-                    <input type="text" id="rtext" name="rtext" placeholder="Contoh: TIMBANGAN DIGITAL READY" maxlength="64">
-                </div>
-
-                <div class="form-group">
-                    <label for="baud">RS232 Baud Rate</label>
-                    <select id="baud" name="baud">
-                        <option value="1200">1200 Baud</option>
-                        <option value="2400">2400 Baud</option>
-                        <option value="4800">4800 Baud</option>
-                        <option value="9600">9600 Baud (Standard A12E)</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="btn-submit" id="btnSubmit">
-                    <span>Simpan Konfigurasi</span>
-                </button>
-            </form>
         </section>
+
+        <!-- TAB 3: KONFIGURASI INDIKATOR & RS232 -->
+        <section class="tab-content" id="tab-config">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">PENGATURAN KOMUNIKASI INDIKATOR</span>
+                </div>
+                <form id="serialForm">
+                    <div class="form-group">
+                        <label for="baud">RS232 Baud Rate</label>
+                        <select id="baud" name="baud">
+                            <option value="1200">1200 Baud</option>
+                            <option value="2400">2400 Baud</option>
+                            <option value="4800">4800 Baud</option>
+                            <option value="9600">9600 Baud (Standard Yaohua A12E)</option>
+                            <option value="19200">19200 Baud</option>
+                            <option value="115200">115200 Baud</option>
+                        </select>
+                        <p class="field-hint">Pastikan baud rate ini sesuai dengan pengaturan output RS232 pada indikator timbangan Anda.</p>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Simpan Pengaturan RS232</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- TAB 4: DIAGNOSTIK RAW STREAM -->
+        <section class="tab-content" id="tab-debug">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">DIAGNOSTIK STREAM DATA RS232</span>
+                    <button type="button" class="btn-sm" id="btnTogglePause">Pause Stream</button>
+                </div>
+                <div class="debug-terminal">
+                    <div class="terminal-header">
+                        <span>DATA MENTAH TERAKHIR (RAW STREAM):</span>
+                    </div>
+                    <div class="terminal-body" id="rawStreamBox">Menunggu data masuk dari RS232...</div>
+                </div>
+                <p class="field-hint">Halaman ini digunakan oleh teknisi untuk memverifikasi karakter ASCII mentah yang dikirim oleh indikator.</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; CV Duta Surya &bull; Display Timbangan Eksternal v1.2</p>
+        </footer>
     </div>
 
     <!-- Toast Notification -->
-    <div class="toast" id="toast">Konfigurasi Berhasil Disimpan!</div>
+    <div class="toast" id="toast">Pengaturan Berhasil Disimpan!</div>
 
     <script src="/app.js"></script>
 </body>
 </html>
+
